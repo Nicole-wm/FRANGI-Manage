@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <h3 class="modal-title">素材管理</h3>
+</div>
+<div class="modal-body">
+    <form>
+        <div class="form-group">
+            <h4 for="inputTname">素材内容</h4>
+            <div class="wrapper-md">
+                <div lazy-load="textAngular">
+                <div text-angular ng-model="mate.content" class="btn-groups" id="inputTname" ></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <h4 for="inputTbanner">素材图列表</h4>
+            <div class="wrapper-md">
+                <div class="m-b">
+                    <input type="file" nv-file-select="" uploader="uploader" accept="image/*" multiple>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4" ng-repeat="item in mate.posters track by $index" ng-mouseover="CurShow = $index" ng-mouseleave="CurShow = -1">
+                        <span class="thumbnail" style="height:0;padding-bottom: 100%;background: url('{{item}}') no-repeat center center;background-size:contain;">
+                        </span>
+                        <img ng-src="{{item}}" ng-show="CurShow==$index" class="thumbnail" style="z-index:100;width:200%;position: absolute;top:50%;left:50%;"> 
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </form>
+</div>
+<div class="modal-footer clearfix">                  
+    <button class="btn btn-default" ng-click="cancel()">取消</button>
+    <button class="btn btn-success" ng-click="ok()">确定</button>
+</div> 

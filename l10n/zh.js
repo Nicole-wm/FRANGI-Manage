@@ -12,6 +12,7 @@
       "MATERIAL" : {
         "MATERIAL_LIBRARY" : "素材库",
         "CATEGORY_LIST" : "类别管理",
+        "TYPE_LIST":"类型管理",
         "MATERIAL_LIST" : "素材列表"
       }
     }

@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h3 class="modal-title">类型管理</h3>
+</div>
+<div class="modal-body">
+    <form>
+        <div class="form-group">
+            <label for="inputTname">类型名称</label>
+            <input ng-model="items.tname" type="text" class="form-control" id="inputTname" placeholder="输入类型名">
+        </div>
+        <div class="form-group">
+            <label for="inputTbanner">Banner</label>
+            <div class="wrapper-md">
+                <div class="m-b">
+                    <input type="file" nv-file-select="" uploader="uploader" accept="image/*"/>
+                </div>
+                <div class="m-b">
+                    <img id="img-preview" ng-src="{{items.banner}}" class="img-thumbnail"> 
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">                  
+    <button class="btn btn-default" ng-click="cancel()">取消</button>
+    <button class="btn btn-success" ng-click="ok()">确定</button>
+</div> 

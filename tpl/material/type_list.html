@@ -1,0 +1,38 @@
+<div ng-controller="TypeListCtrl">
+    <div class="bg-light lter b-b wrapper-md">
+        <p class="m-n font-thin h3"><span>{{CurCateName}}</span>&nbsp;&gt;&nbsp;<span translate="aside.nav.MATERIAL.TYPE_LIST">TYPE_LIST</span></p>
+    </div>
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-body b-b b-light">
+                <span translate="public.SEARCH">SEARCH</span>： <input id="filter" type="text" class="form-control input-sm w-sm inline m-r"/>
+                <span class="pull-right">
+                    <button class="btn btn-success btn-sm" ng-click="openTypeModal(0,'')">添加</button>
+                    <span class="btn btn-primary btn-sm">排序</span>
+                </span>
+            </div>
+            <div class="wrapper-md">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row row-sm text-center">
+                            <div class="col-xs-2 item clearfix m-b-md" ng-repeat="item in TypeList">
+                                <span ui-sref="app.material_list({typeID:item.id,typeName:item.tname})">
+                                    <img ng-src="{{item.banner}}" alt="{{item.tname}}" class="img-thumbnail">
+                                    <span class="h4 block bottom w-full text-white font-thin l-h-2x" style="text-shadow:0.5px 0.5px 0.5px #353535;">{{item.tname}}</span>
+                                </span>
+                                <span class="block top w-full text-right wrapper-lg">
+                                    <span class="btn btn-success btn-xs" ng-click="openTypeModal(1,item)">编辑</span>
+                                    <span class="btn btn-danger btn-xs" title="删除类型" ng-click="deleteType(item.id)">删除</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/ng-template" id="myModalType">
+                <div ng-include="'tpl/material/modal_type.html'"></div>
+            </script>
+            <toaster-container toaster-options="{'time-out': 2000}"></toaster-container>
+        </div>
+    </div>
+</div>

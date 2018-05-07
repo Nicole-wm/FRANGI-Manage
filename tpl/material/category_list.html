@@ -1,12 +1,12 @@
 <div class="bg-light lter b-b wrapper-md">
   <h1 class="m-n font-thin h3" translate="aside.nav.MATERIAL.CATEGORY_LIST">CATEGORY_LIST</h1>
 </div>
-<div class="wrapper-md">
+<div class="wrapper-md" ng-controller="CategoryListCtrl">
   <div class="panel panel-default">
     <div class="panel-body b-b b-light">
       <span translate="public.SEARCH">SEARCH</span>： <input id="filter" type="text" class="form-control input-sm w-sm inline m-r"/>
       <span class="pull-right">
-        <span class="btn btn-success btn-sm" ng-click="">添加</span>
+        <button class="btn btn-success btn-sm" ng-click="openCateModal(0,'')">添加</button>
         <span class="btn btn-primary btn-sm">排序</span>
       </span>
     </div>
@@ -20,46 +20,35 @@
             <th>
               素材类
             </th>
-            <th data-hide="phone,tablet">
+            <th data-hide="tablet">
+              新建时间
+            </th>
+            <th data-hide="tablet">
               修改时间
             </th>
             <th data-toggle="true">
               操作
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td><a href>女神水</a></td>
-              <td data-value="78025368992">2018-01-10</td>
-              <td data-value="1">
-                <span class="btn btn-success btn-xs" title="修改类别信息">修改</span>
-                <span class="btn btn-info btn-xs" title="添加素材类型">添加类型</span>
-                <span class="btn btn-danger btn-xs" title="删除类别">删除</span>
-              </td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td><input type="text" name="cname" value="素颜霜"></td>
-              <td data-value="78025368992">2018-01-10</td>
-              <td data-value="2">
-                <span class="btn btn-danger btn-xs" title="确认修改">确认</span>
-                <span class="btn btn-default btn-xs" title="取消修改">取消</span>
-              </td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td><a href>资讯</a></td>
-              <td data-value="78025368997">2018-03-17</td>
-              <td data-value="1">
-                <span class="btn btn-success btn-xs" title="修改类别信息">修改</span>
-                <span class="btn btn-info btn-xs" title="添加素材类型">添加类型</span>
-                <span class="btn btn-danger btn-xs" title="删除类别">删除</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in CateList">
+            <td>{{$index + 1}}</td>
+            <td>{{item.cname}}</td>
+            <td>{{item.createtime}}</td>
+            <td>{{item.updatetime}}</td>
+            <td>
+              <span class="btn btn-success btn-xs" title="修改类别信息" ng-click="openCateModal(1,item)">修改</span>
+              <span class="btn btn-info btn-xs" title="添加素材类型" ui-sref="app.type_list({cateID:item.id,cateName:item.cname})">类型管理</span>
+              <span class="btn btn-danger btn-xs" title="删除类别" ng-click="deleteCate(item.id)">删除</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+    <script type="text/ng-template" id="myModalCategory">
+      <div ng-include="'tpl/material/modal_category.html'"></div>
+    </script>
+    <toaster-container toaster-options="{'time-out': 2000}"></toaster-container>
   </div>
-
+</div>
