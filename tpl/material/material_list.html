@@ -12,36 +12,31 @@
                 </span>
             </div>
             <div>
-                <table class="table m-b-none"  ui-jq="footable" data-filter="#filter">
+                <table class="table m-b-none"  ui-jq="footable" data-filter="#filter" style="table-layout:fixed">
                     <thead>
                         <tr>
-                            <th>
-                                编号
-                            </th>
-                            <th>
-                                素材内容
-                            </th>
-                            <th data-hide="tablet">
-                                新建时间
-                            </th>
-                            <th data-hide="tablet">
-                                修改时间
-                            </th>
-                            <th data-toggle="true">
-                                操作
-                            </th>
+                            <th width="10%"><nobr>编号</nobr></th>
+                            <th width="30%"><nobr>素材内容</nobr></th>
+                            <th data-hide="tablet"><nobr>新建时间</nobr></th>
+                            <th data-hide="tablet"><nobr>修改时间</nobr></th>
+                            <th data-hide="tablet"><nobr>是否发布</nobr></th>
+                            <th data-toggle="true"><nobr>操作</nobr></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="item in MateList">
                             <td>{{$index + 1}}</td>
-                            <td>{{item.content}}</td>
+                            <td class="text-ellipsis" title="{{item.content | htmlToPlaintext}}">{{item.content | htmlToPlaintext}}</td>
                             <td>{{item.createtime}}</td>
                             <td>{{item.updatetime}}</td>
+                            <td data-value="{{item.publish}}">
+                                <span ng-show="{{item.publish}}==1">是</span>
+                                <span ng-show="{{item.publish}}==0">否</span>
+                            </td>
                             <td>
-                              <span class="btn btn-success btn-xs" title="修改类别信息" ng-click="openCateModal(1,item)">修改</span>
-                              <span class="btn btn-info btn-xs" title="添加素材类型" ui-sref="app.type_list({cateID:item.id,cateName:item.cname})">类型管理</span>
-                              <span class="btn btn-danger btn-xs" title="删除类别" ng-click="deleteCate(item.id)">删除</span>
+                              <span class="btn btn-success btn-xs" title="编辑素材" ng-click="openMateModal(1,item)">编辑</span>
+                              <span class="btn btn-info btn-xs" title="发布素材">发布</span>
+                              <span class="btn btn-danger btn-xs" title="删除素材" ng-click="deleteMate(item.id)">删除</span>
                           </td>
                       </tr>
                   </tbody>

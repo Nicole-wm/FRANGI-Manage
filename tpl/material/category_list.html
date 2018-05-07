@@ -38,8 +38,8 @@
             <td>{{item.createtime}}</td>
             <td>{{item.updatetime}}</td>
             <td>
-              <span class="btn btn-success btn-xs" title="修改类别信息" ng-click="openCateModal(1,item)">修改</span>
-              <span class="btn btn-info btn-xs" title="添加素材类型" ui-sref="app.type_list({cateID:item.id,cateName:item.cname})">类型管理</span>
+              <span class="btn btn-success btn-xs" title="编辑类别" ng-click="openCateModal(1,item)">编辑</span>
+              <span class="btn btn-info btn-xs" title="添加类型" ui-sref="app.type_list({cateID:item.id,cateName:item.cname})">类型管理</span>
               <span class="btn btn-danger btn-xs" title="删除类别" ng-click="deleteCate(item.id)">删除</span>
             </td>
           </tr>

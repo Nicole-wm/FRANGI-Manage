@@ -4,10 +4,39 @@
 <div class="modal-body">
     <form>
         <div class="form-group">
+            <h4 for="inputTname">素材类型</h4>
+            <div class="wrapper-md">
+                <!-- <label>
+                    类别
+                    <select class="form-control" ng-model="mate.cid" ng-options="cate.cname for cate in CateList" ng-change="ChangeCate()" >
+                        <option value="">选择类别</option>
+                    </select>
+                </label>
+                <label ng-show="CurCate.type.length">
+                    类型
+                    <select class="form-control" ng-model="mate.tid" ng-options="type.tname for type in CurCate.type">
+                        <option value="">选择素材类型</option>
+                    </select>
+                </label> -->
+                <label>
+                    类别  
+                    <select class="form-control" ng-model="mate.cid" ng-options="cate.id as cate.cname for cate in CateList" ng-change="ChangeCate()" >
+                        <option value="">选择类别</option>
+                    </select>
+                </label>
+                <label ng-show="CurCate.type.length">
+                    类型
+                    <select class="form-control" ng-model="mate.tid" ng-options="type.id as type.tname for type in CurCate.type">
+                        <option value="">选择素材类型</option>
+                    </select>
+                </label> 
+            </div>
+        </div>
+        <div class="form-group">
             <h4 for="inputTname">素材内容</h4>
             <div class="wrapper-md">
                 <div lazy-load="textAngular">
-                <div text-angular ng-model="mate.content" class="btn-groups" id="inputTname" ></div>
+                    <div text-angular ng-model="mate.content" class="btn-groups" id="inputTname" ></div>
                 </div>
             </div>
         </div>
