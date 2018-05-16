@@ -1,38 +1,71 @@
-app.controller('MateListCtrl', ['$scope','$modal','toaster','$stateParams',function($scope, $modal,toaster,$stateParams) {
-	$scope.CurTypeID = $stateParams.typeID;
-	$scope.CurTypeName = $stateParams.typeName;
-
-	$scope.MateList=[{
-		"id": 1,
-		"cid":1,
-		"tid":1,
-		"createtime":"2018-05-01",
-		"updatetime":"2018-05-01",
-		"content":"种草好精华又不想太贵？请选择FRANGI二代女神水",
-		"publish":1,
-		"posters":["../images/mateImg/1/1.jpg","../images/mateImg/1/2.jpg","../images/mateImg/1/3.jpg"]
-	},{
-		"id":2,
-		"cid":1,
-		"tid":2,
-		"createtime":"2018-05-02",
-		"updatetime":"2018-05-03",
-		"content":"<p><b>护肤Tips</b></p>看过来~",
-		"publish":1,
-		"posters":["../images/mateImg/1/4.jpg","../images/mateImg/1/5.jpg","../images/mateImg/1/1.jpg"]
-	},{
-		"id":3,
-		"cid":2,
-		"tid":1,
-		"createtime":"2018-05-03",
-		"updatetime":"2018-05-04",
-		"content":"<p><b>【FRANGI 微商 · 开门红】</b></p><p>开好头，起好步，整年运势挡不住</p><p>活动福利三重奏</p><p>最大的优惠 + 最热卖的产品</p><p>打下全年业绩好基础</p>",
-		"publish":0,
-		"posters":["../images/mateImg/1/2.jpg","../images/mateImg/1/4.jpg"]
+app.controller('MateListCtrl', ['$scope','$modal','toaster','$stateParams','$http',function($scope, $modal,toaster,$stateParams,$http) {
+	if($stateParams.cateID){
+		$scope.CurCateID = $stateParams.cateID;
+		$scope.CurCateName = $stateParams.cateName;
+	}else{
+		$scope.CurCateID = "";
+		$scope.CurCateName = "全部类别";
 	}
-	]
+
+	if($stateParams.typeID){
+		$scope.CurTypeID = $stateParams.typeID;
+		$scope.CurTypeName = $stateParams.typeName;
+	}else{
+		$scope.CurTypeID = "";
+		$scope.CurTypeName = "全部类型";
+	}
+
+	$scope.ShowListFlag=false;
+	$scope.MateList=[];
+
+	$scope.totalItems=0;
+	$scope.currentPage = 1;
+	$scope.pageSize = 10;
+
+	function InitPage(currentPage){
+		return param={
+			'page':currentPage,
+			'limit':$scope.pageSize
+		}
+	}
+
+	$scope.InitMateList = function(param){
+		if(!param){
+			param=InitPage(1);
+		}
+		var GetCateUrl = 'api/material/mate/mate_list.php?cateID='+$scope.CurCateID+'&typeID='+$scope.CurTypeID+'&page='+param.page+'&limit='+param.limit;
+		$http.get(GetCateUrl).success(function(response){
+			if(response.code==1) {
+				$scope.totalItems=response.data.count;
+				$scope.MateList=response.data.results;
+				if(response.data.count==0){
+					$scope.ShowListFlag=true;
+				}else{
+					$scope.ShowListFlag=false;
+				}
+			}else{
+				console.log('Server Error');
+			}
+		}).error(function(response, status){
+			console.log(response.error);
+		});
+	};
+
+	$scope.InitMateList(InitPage(1));
 
 	$scope.openMateModal = function (Stype,ObjDes) {
+		if(ObjDes){
+			ObjDes.isstype="update";
+		}else{
+			ObjDes.isstype="add";
+			if($scope.CurCateID){
+				ObjDes={
+					cateid:$scope.CurCateID,
+					typeid:$scope.CurTypeID
+				}
+			}
+		}
+
 		$scope.items = ObjDes;
 		var modalInstance = $modal.open({
 			templateUrl: 'myModalMate',
@@ -47,11 +80,49 @@ app.controller('MateListCtrl', ['$scope','$modal','toaster','$stateParams',funct
 
 		modalInstance.result.then(function (result) {
 			if(result!="cancel"){
-				console.log(result);
 				if(Stype){
-					toaster.pop("success","","修改成功！");
+					var UpdateMateUrl = 'api/material/mate/mate_update.php';
+					var Param = {
+						id:ObjDes.id,
+						cateid:result.cateid,
+						typeid:result.typeid,	
+						content:result.content,	
+						posters:result.postersUrl
+					};
+
+					$http.post(UpdateMateUrl,Param).success(function(response){
+						if(response.code==1) {
+							toaster.pop("success","","修改成功！");
+							$scope.InitMateList(InitPage($scope.currentPage));
+						}else{
+							toaster.pop("error","","修改失败！");
+							console.log('Server Error');
+						}
+					}).error(function(response, status){
+						toaster.pop("error","","修改失败！");
+						console.log(response.error);
+					});
 				}else{
-					toaster.pop("success","","添加成功！");
+					var AddMateUrl = 'api/material/mate/mate_add.php';
+					var Param = {
+						cateid:result.cateid,
+						typeid:result.typeid,	
+						content:result.content,	
+						posters:result.postersUrl
+					};
+
+					$http.post(AddMateUrl,Param).success(function(response){
+						if(response.code==1) {
+							toaster.pop("success","","添加成功！");
+							$scope.InitMateList(InitPage($scope.currentPage));
+						}else{
+							toaster.pop("error","","添加失败！");
+							console.log('Server Error');
+						}
+					}).error(function(response, status){
+						toaster.pop("error","","添加失败！");
+						console.log(response.error);
+					});
 				}
 			}else{
 			}
@@ -60,7 +131,7 @@ app.controller('MateListCtrl', ['$scope','$modal','toaster','$stateParams',funct
 	};
 
 	$scope.deleteMate = function (ObjID) {
-		var CurCateID=ObjID;
+		var CurMateID=ObjID;
 		var CommonText = {
 			modalTitle: '删除素材',
 			modalContent: '确定删除该素材？'
@@ -78,112 +149,112 @@ app.controller('MateListCtrl', ['$scope','$modal','toaster','$stateParams',funct
 
 		modalInstance.result.then(function (result) {
 			if(result=="ok"){
-				toaster.pop("success","","删除成功！");
+				var DeleteMateUrl = 'api/material/mate/mate_delete.php';
+				var Param = {
+					id:CurMateID
+				};
+
+				$http.post(DeleteMateUrl,Param).success(function(response){
+					if(response.code==1) {
+						toaster.pop("success","","删除成功！");
+						$scope.InitMateList(InitPage($scope.currentPage));
+					}else{
+						toaster.pop("error","","删除失败！");
+						console.log('Server Error');
+					}
+				}).error(function(response, status){
+					toaster.pop("error","","删除失败！");
+					console.log(response.error);
+				});
 			}else{
 			}
 		}, function () {
 		});
 	};
+
+	$scope.sortMate = function(){
+		alert("功能开发中，敬请期待！");
+	};
+
+	$scope.publishMate = function(){
+		alert("功能开发中，敬请期待！");
+	};
+
+	$scope.pageChanged = function()/*Fun-分页*/
+	{
+		$scope.InitMateList(InitPage($scope.currentPage));
+	};
 }]); 
 
-app.controller('MateModalCtrl', ['$scope','$modalInstance','items','FileUploader','taOptions',function($scope,$modalInstance,items,FileUploader,taOptions) {
+app.controller('MateModalCtrl', ['$scope','$modalInstance','items','FileUploader','taOptions','$http','toaster',function($scope,$modalInstance,items,FileUploader,taOptions,$http,toaster) {
 	$scope.CurShow=-1;
+	$scope.mate={};
 	taOptions.toolbar = [
 	['h1', 'h2', 'h3', 'h4', 'h5', 'h6','p'],
 	['bold', 'italics', 'underline', 'ul', 'ol', 'redo', 'undo', 'clear'],
 	['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent']
 	];
 
-	$scope.CateList = [
-	{
-		"id": 1, 
-		"cname": "女神水",
-		"type": [{
-			"id":1,
-			"tname": "女神水实拍图",
-			"createtime":"2018-05-01",
-			"updatetime":"2018-05-01",
-			"banner":"../images/typeBanner/1/1.jpg"
-		},{
-			"id":2,
-			"tname": "女神水功效海报",
-			"createtime":"2018-05-02",
-			"updatetime":"2018-05-02",
-			"banner":"../images/typeBanner/1/2.jpg"
-		},{
-			"id":3,
-			"tname": "女神水模特图",
-			"createtime":"2018-05-03",
-			"updatetime":"2018-05-03",
-			"banner":"../images/typeBanner/1/3.jpg"
-		},{
-			"id":4,
-			"tname": "女神水使用场景图",
-			"createtime":"2018-05-04",
-			"updatetime":"2018-05-04",
-			"banner":"../images/typeBanner/1/4.jpg"
-		},{
-			"id":5,
-			"tname": "买家秀",
-			"createtime":"2018-05-05",
-			"updatetime":"2018-05-05",
-			"banner":"../images/typeBanner/1/5.jpg"
-		}
-		]
-	},{
-		"id": 2, 
-		"cname": "巴厘岛",
-		"type": [{
-			"id":1,
-			"tname": "产品图",
-			"createtime":"2018-05-01",
-			"updatetime":"2018-05-01",
-			"banner":"../images/typeBanner/1/3.jpg"
-		},{
-			"id":2,
-			"tname": "经销商",
-			"createtime":"2018-05-05",
-			"updatetime":"2018-05-05",
-			"banner":"../images/typeBanner/1/2.jpg"
-		}
-		]
-	}
-	]
-
-	$scope.mate = items;
-	if(!$scope.mate){//新建
-		$scope.mate={
-			"posters":["../img/poster.png"]
-		}
+	if(items.isstype=="update"){
+		$scope.mate = items;
+		$scope.mate.posters = angular.fromJson(items.posters);
+		$scope.mate.postersUrl = angular.fromJson(items.posters);
+	}else{
+		$scope.mate.cateid = null;
+		$scope.mate.typeid = null;
+		$scope.mate.posters=["../img/poster.png"];
+		$scope.mate.postersUrl=["../img/poster.png"];
 		$scope.mate.content = '<h3>在此输入素材内容!</h3><p>例如</p><p><b>【FRANGI 微商 · 开门红】</b></p><p>开好头，起好步，整年运势挡不住</p><p>活动福利三重奏</p><p>最大的优惠 + 最热卖的产品</p><p>打下全年业绩好基础</p>';
-		$scope.mate.cid = null;
-		$scope.mate.tid = null;
+		if(items.cateid){
+			$scope.mate.cateid = items.cateid;
+			$scope.mate.typeid = items.typeid;
+		}
 	}
 
 	$scope.ChangeCate = function () {
+		if($scope.mate.cateid==null){
+			$scope.mate.typeid = null;
+		}
 		$.each($scope.CateList, function(index,value) {  
-			if ($scope.CateList[index]["id"] == $scope.mate.cid) {  
+			if ($scope.CateList[index]["id"] == $scope.mate.cateid) {  
 				$scope.CurCate=$scope.CateList[index];
 				return false;  
-			}  
-		});  
+			} 
+		});
 	};
-	
-	$scope.ChangeCate();
+
+	$scope.CateList=[];
+	$scope.InitCateList = function() {
+		var GetCateUrl = 'api/material/mate/category.php';
+		$http.get(GetCateUrl).success(function(response){
+			if(response.code==1) {
+				$scope.CateList=response.data;
+				$scope.ChangeCate();
+			}else{
+				console.log('Server Error');
+			}
+		}).error(function(response, status){
+			console.log(response.error);
+		});
+	};
+
+	$scope.InitCateList();
 
 	var uploader = $scope.uploader = new FileUploader({
-		url: 'js/controllers/upload.php'
+		url: 'api/file/upload.php',
+		formData:[
+		{type:'mateImg'},
+		{tid:$scope.mate.typeid}
+		]
 	});
 
-	uploader.filters.push({
-		name: 'customFilter',
-		fn: function(item, options) {
-			return this.queue.length < 10;
-		}
-	});
+	$scope.clearItems = function(){ 
+		uploader.clearQueue();
+		$scope.mate.posters=[];
+		$scope.mate.postersUrl=[];
+	};
 
 	uploader.onAfterAddingFile = function(fileItem) {
-		$scope.mate.posters=[];
 		var reader = new FileReader(); 
 		reader.addEventListener("load", function (e) { 
 			$scope.$apply(function(){      
@@ -193,9 +264,27 @@ app.controller('MateModalCtrl', ['$scope','$modalInstance','items','FileUploader
 		reader.readAsDataURL(fileItem._file); 
 	};
 
-	$scope.ok = function () {
-		console.log($scope.mate.CurCate);
+	uploader.onCompleteItem = function(fileItem, response, status, headers) {
+		if(response.code==1) {
+			$scope.mate.postersUrl.push(response.data);
+		}else{
+			toaster.pop("error","","图片上传失败！请刷新页面重试");
+		}
+	};
+	uploader.onCompleteAll = function() {
 		$modalInstance.close($scope.mate);
+	};
+
+	$scope.intendSuccess = function () {  
+		if(uploader.queue==0){
+			$modalInstance.close($scope.mate);
+		}else{
+			uploader.uploadAll();
+		}
+	};
+
+	$scope.ok = function () {
+		$scope.intendSuccess();
 	};
 
 	$scope.cancel = function () {

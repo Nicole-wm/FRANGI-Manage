@@ -6,26 +6,28 @@
         <div class="panel panel-default">
             <div class="panel-body b-b b-light">
                 <span translate="public.SEARCH">SEARCH</span>： <input id="filter" type="text" class="form-control input-sm w-sm inline m-r"/>
-                <span class="pull-right">
+                <span class="pull-right" ng-show="CurCateID">
                     <button class="btn btn-success btn-sm" ng-click="openTypeModal(0,'')">添加</button>
-                    <span class="btn btn-primary btn-sm">排序</span>
+                    <span class="btn btn-primary btn-sm" ng-click="sortCate()">排序</span>
                 </span>
             </div>
             <div class="wrapper-md">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="row row-sm text-center">
-                            <div class="col-xs-2 item clearfix m-b-md" ng-repeat="item in TypeList">
-                                <span ui-sref="app.material_list({typeID:item.id,typeName:item.tname})">
-                                    <img ng-src="{{item.banner}}" alt="{{item.tname}}" class="img-thumbnail">
-                                    <span class="h4 block bottom w-full text-white font-thin l-h-2x" style="text-shadow:0.5px 0.5px 0.5px #353535;">{{item.tname}}</span>
+                        <div class="row row-sm text-center" ng-show="!ShowListFlag">
+                            <div class="col-xs-2 item clearfix" ng-repeat="item in TypeList">
+                                <span ui-sref="app.material_list({cateID:CurCateID,cateName:CurCateName,typeID:item.id,typeName:item.tname})">
+                                    <span class="thumbnail" style="height:0;padding-bottom: 100%;background: url('{{item.banner}}') no-repeat center center;background-size:contain;border:0" title="{{item.tname}}">
+                                    </span>
+                                    <span class="h4 block bottom w-full text-white font-thin m-b-lg" style="text-shadow:0.5px 0.5px 0.5px #353535;">{{item.tname}}</span>
                                 </span>
-                                <span class="block top w-full text-right wrapper-lg">
+                                <span class="block top text-right wrapper-lg" style="right:0">
                                     <span class="btn btn-success btn-xs" ng-click="openTypeModal(1,item)">编辑</span>
                                     <span class="btn btn-danger btn-xs" title="删除类型" ng-click="deleteType(item.id)">删除</span>
                                 </span>
                             </div>
                         </div>
+                        <h3 ng-show="ShowListFlag">暂无相关内容，请添加！</h3>
                     </div>
                 </div>
             </div>

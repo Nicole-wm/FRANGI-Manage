@@ -1,17 +1,25 @@
-app.controller('CategoryListCtrl', ['$scope','$modal','toaster',function($scope, $modal,toaster) {
-	$scope.CateList=[{
-		"id": "1",
-		"cname": "女神水",
-		"createtime":"2018-05-01",
-		"updatetime":"2018-05-01"
-	},
-	{
-		"id": "2",
-		"cname": "巴厘岛",
-		"createtime":"2018-05-01",
-		"updatetime":"2018-05-02"
-	}
-	]
+app.controller('CategoryListCtrl', ['$scope','$modal','toaster','$http',function($scope, $modal,toaster,$http) {
+	$scope.ShowListFlag=false;
+	$scope.CateList=[];
+	$scope.InitCateList = function() {
+		var GetCateUrl = 'api/material/cate/cate_list.php';
+		$http.get(GetCateUrl).success(function(response){
+			if(response.code==1) {
+				$scope.CateList=response.data;
+				if($scope.CateList==""){
+					$scope.ShowListFlag=true;
+				}else{
+					$scope.ShowListFlag=false;
+				}
+			}else{
+				console.log('Server Error');
+			}
+		}).error(function(response, status){
+			console.log(response.error);
+		});
+	};
+
+	$scope.InitCateList();
 
 	$scope.openCateModal = function (Stype,ObjDes) {
 		$scope.items = {
@@ -30,11 +38,43 @@ app.controller('CategoryListCtrl', ['$scope','$modal','toaster',function($scope,
 
 		modalInstance.result.then(function (result) {
 			if(result!="cancel"){
-				console.log(result);
 				if(Stype){
-					toaster.pop("success","","修改成功！");
+					var UpdateCateUrl = 'api/material/cate/cate_update.php';
+					var Param = {
+						id:ObjDes.id,
+						cname:result.MCateName
+					};
+
+					$http.post(UpdateCateUrl,Param).success(function(response){
+						if(response.code==1) {
+							toaster.pop("success","","修改成功！");
+							$scope.InitCateList();
+						}else{
+							toaster.pop("error","","修改失败！");
+							console.log('Server Error');
+						}
+					}).error(function(response, status){
+						toaster.pop("error","","修改失败！");
+						console.log(response.error);
+					});
 				}else{
-					toaster.pop("success","","添加成功！");
+					var AddCateUrl = 'api/material/cate/cate_add.php';
+					var Param = {
+						cname:result.MCateName
+					};
+
+					$http.post(AddCateUrl,Param).success(function(response){
+						if(response.code==1) {
+							toaster.pop("success","","添加成功！");
+							$scope.InitCateList();
+						}else{
+							toaster.pop("error","","添加失败！");
+							console.log('Server Error');
+						}
+					}).error(function(response, status){
+						toaster.pop("error","","添加失败！");
+						console.log(response.error);
+					});
 				}
 			}else{
 			}
@@ -61,10 +101,30 @@ app.controller('CategoryListCtrl', ['$scope','$modal','toaster',function($scope,
 
 		modalInstance.result.then(function (result) {
 			if(result=="ok"){
-				toaster.pop("success","","删除成功！");
+				var DeleteCateUrl = 'api/material/cate/cate_delete.php';
+				var Param = {
+					id:CurCateID
+				};
+
+				$http.post(DeleteCateUrl,Param).success(function(response){
+					if(response.code==1) {
+						toaster.pop("success","","删除成功！");
+						$scope.InitCateList();
+					}else{
+						toaster.pop("error","","删除失败！");
+						console.log('Server Error');
+					}
+				}).error(function(response, status){
+					toaster.pop("error","","删除失败！");
+					console.log(response.error);
+				});
 			}else{
 			}
 		}, function () {
 		});
+	};
+
+	$scope.sortCate = function(){
+		alert("功能开发中，敬请期待！");
 	};
 }]); 

@@ -1,40 +1,44 @@
-app.controller('TypeListCtrl', ['$scope','$modal','toaster','$stateParams',function($scope, $modal,toaster,$stateParams) {
-	$scope.CurCateName = $stateParams.cateName;
-
-	$scope.TypeList=[{
-		"id": "1",
-		"tname": "女神水实拍图",
-		"createtime":"2018-05-01",
-		"updatetime":"2018-05-01",
-		"banner":"../images/typeBanner/1/1.jpg"
-	},{
-		"id": "2",
-		"tname": "女神水功效海报",
-		"createtime":"2018-05-02",
-		"updatetime":"2018-05-02",
-		"banner":"../images/typeBanner/1/2.jpg"
-	},{
-		"id": "3",
-		"tname": "女神水模特图",
-		"createtime":"2018-05-03",
-		"updatetime":"2018-05-03",
-		"banner":"../images/typeBanner/1/3.jpg"
-	},{
-		"id": "4",
-		"tname": "女神水使用场景图",
-		"createtime":"2018-05-04",
-		"updatetime":"2018-05-04",
-		"banner":"../images/typeBanner/1/4.jpg"
-	},{
-		"id": "5",
-		"tname": "买家秀",
-		"createtime":"2018-05-05",
-		"updatetime":"2018-05-05",
-		"banner":"../images/typeBanner/1/5.jpg"
+app.controller('TypeListCtrl', ['$scope','$modal','toaster','$stateParams','$http',function($scope, $modal,toaster,$stateParams,$http) {
+	if($stateParams.cateID){
+		$scope.CurCateID = $stateParams.cateID;
+		$scope.CurCateName = $stateParams.cateName;
+	}else{
+		$scope.CurCateID = "";
+		$scope.CurCateName = "全部";
 	}
-	]
+
+	$scope.TypeList=[];
+	$scope.ShowListFlag=false;
+
+	$scope.InitTypeList = function() {
+		var GetTypeUrl = 'api/material/type/type_list.php?cateID='+$scope.CurCateID;
+		$http.get(GetTypeUrl).success(function(response){
+			if(response.code==1) {
+				$scope.TypeList=response.data;
+				if($scope.TypeList==""){
+					$scope.ShowListFlag=true;
+				}else{
+					$scope.ShowListFlag=false;
+				}
+			}else{
+				console.log('Server Error');
+			}
+		}).error(function(response, status){
+			console.log(response.error);
+		});
+	};
+
+	$scope.InitTypeList();
 
 	$scope.openTypeModal = function (Stype,ObjDes) {
+		if(ObjDes){
+			ObjDes.iscreate=false;
+		}else{
+			ObjDes={
+				'iscreate':true,
+				'cateid':$scope.CurCateID
+			};
+		}
 		$scope.items = ObjDes;
 		var modalInstance = $modal.open({
 			templateUrl: 'myModalType',
@@ -49,11 +53,54 @@ app.controller('TypeListCtrl', ['$scope','$modal','toaster','$stateParams',funct
 
 		modalInstance.result.then(function (result) {
 			if(result!="cancel"){
-				console.log(result);
 				if(Stype){
-					toaster.pop("success","","修改成功！");
+					if(result.bannerUrl){
+						var UpdateTypeUrl = 'api/material/type/type_update.php';
+						var Param = {
+							id:ObjDes.id,
+							tname:result.tname,
+							banner:result.bannerUrl
+						};
+
+						$http.post(UpdateTypeUrl,Param).success(function(response){
+							if(response.code==1) {
+								toaster.pop("success","","修改成功！");
+								$scope.InitTypeList();
+							}else{
+								toaster.pop("error","","修改失败！");
+								console.log('Server Error');
+							}
+						}).error(function(response, status){
+							toaster.pop("error","","修改失败！");
+							console.log(response.error);
+						});
+					}else{
+						$scope.InitTypeList();
+					}
 				}else{
-					toaster.pop("success","","添加成功！");
+					if(result.bannerUrl){
+						var AddTypeUrl = 'api/material/type/type_add.php';
+						var Param = {
+							tname:result.tname,
+							banner:result.bannerUrl,
+							cateid:$scope.CurCateID
+						};
+
+						$http.post(AddTypeUrl,Param).success(function(response){
+							if(response.code==1) {
+								toaster.pop("success","","添加成功！");
+								$scope.InitTypeList();
+							}else{
+								toaster.pop("error","","添加失败！");
+								console.log('Server Error');
+							}
+						}).error(function(response, status){
+							toaster.pop("error","","添加失败！");
+							console.log(response.error);
+						});
+					}else{
+						$scope.InitTypeList();
+					}
 				}
 			}else{
 			}
@@ -80,45 +127,85 @@ app.controller('TypeListCtrl', ['$scope','$modal','toaster','$stateParams',funct
 
 		modalInstance.result.then(function (result) {
 			if(result=="ok"){
-				toaster.pop("success","","删除成功！");
+				var DeleteTypeUrl = 'api/material/type/type_delete.php';
+				var Param = {
+					id:CurTypeID
+				};
+
+				$http.post(DeleteTypeUrl,Param).success(function(response){
+					if(response.code==1) {
+						toaster.pop("success","","删除成功！");
+						$scope.InitTypeList();
+					}else{
+						toaster.pop("error","","删除失败！");
+						console.log('Server Error');
+					}
+				}).error(function(response, status){
+					toaster.pop("error","","删除失败！");
+					console.log(response.error);
+				});
 			}else{
 			}
 		}, function () {
 		});
 	};
+
+	$scope.sortCate = function(){
+		alert("功能开发中，敬请期待！");
+	};
 }]); 
 
-app.controller('TypeModalCtrl', ['$scope','$modalInstance','items','FileUploader',function($scope,$modalInstance,items,FileUploader) {
+app.controller('TypeModalCtrl', ['$scope','$modalInstance','items','toaster','FileUploader',function($scope,$modalInstance,items,toaster,FileUploader) {
 	$scope.items = items;
-	if(!$scope.items){//新建
-		$scope.items={
-			"banner":"../img/banner.png"
-		}
+	if($scope.items.iscreate){//新建
+		$scope.items.banner="../upimg/typeBanner/banner.png"
 	}
+	$scope.items.bannerUrl=$scope.items.banner;
 
 	var uploader = $scope.uploader = new FileUploader({
-		url: 'js/controllers/upload.php'
-	});
+		url: 'api/file/upload.php',
+		formData:[
+		{type:'typeBanner'},
+		{tid:$scope.items.cateid}
+		]
+	}); 
 
-	uploader.filters.push({
-		name: 'customFilter',
-		fn: function(item, options) {
-			return this.queue.length < 10;
-		}
-	});
+	$scope.clearItems = function(){ 
+		uploader.clearQueue();
+		$scope.items.banner="../upimg/typeBanner/banner.png";
+	};
 
 	uploader.onAfterAddingFile = function(fileItem) {
 		var reader = new FileReader(); 
 		reader.addEventListener("load", function (e) { 
-			$scope.$apply(function(){           
-				$scope.items.banner = e.target.result;         
+			$scope.$apply(function(){  
+				$scope.items.banner = e.target.result;      
 			});       
 		}, false);       
 		reader.readAsDataURL(fileItem._file); 
 	};
+	uploader.onCompleteItem = function(fileItem, response, status, headers) {
+		if(response.code==1) {
+			$scope.items.bannerUrl=response.data;
+		}else{
+			$scope.items.bannerUrl='';
+			toaster.pop("error","","图片上传失败！请刷新页面重试");
+		}
+	};
+	uploader.onCompleteAll = function() {
+		$modalInstance.close($scope.items);
+	};
+
+	$scope.intendSuccess = function () {  
+		if(uploader.queue==0){
+			$modalInstance.close($scope.items);
+		}else{
+			uploader.uploadAll();
+		}
+	};
 
 	$scope.ok = function () {
-		$modalInstance.close($scope.items);
+		$scope.intendSuccess();
 	};
 
 	$scope.cancel = function () {

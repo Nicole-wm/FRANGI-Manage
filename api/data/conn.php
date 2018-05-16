@@ -31,7 +31,7 @@
 			global $conn;
 			$str = md5(uniqid(md5(microtime(true)),true)); 
 			$user_token=sha1($str); 
-			$time_out = time() + 604800;
+			$expire_time = time() + 604800;
 
 			$result = mysql_query("select * from user_token where u_id ='$user_id'");
 			if(is_resource($result)){
@@ -44,7 +44,7 @@
 						return false; //return json_encode(array('code'=>2000,'message'=>'token更新失败!原因：'.$conn->error));
 					}
 				}else {
-					$sql = "insert into user_token (u_id, u_token,expire_time) values ('$user_id','$user_token','$time_out')";
+					$sql = "insert into user_token (u_id, u_token,expire_time) values ('$user_id','$user_token','$expire_time')";
 					if (mysql_query($sql,$conn)) {
 						return $user_token; //return json_encode(array('code'=>1001,'message'=>'token插入成功','data'=>$user_token));
 					}else{
@@ -58,22 +58,24 @@
 		public function checktoken($user_token){
 			global $conn;
 			$result = mysql_query("select * from user_token where u_token ='$user_token'");
+
 			if(is_resource($result)){
-				$row = mysql_fetch_array($result,MYSQL_ASSOC); 
+				$row = mysql_fetch_array($result,MYSQL_ASSOC);
 				if (mysql_num_rows($result)){
-					if (time()-$row['time_out'] > 0){
+					$user_id = $row['u_id'];
+					if (time()-$row['expire_time'] > 0){
 						return json_encode(array('code'=>3000,'message'=>'token长时间未使用而过期，需重新登陆!'));
 					}else{
-	                	$new_time_out = time() + 604800;//604800是七天
-	                	$sql = "update user_token set expire_time='$new_time_out' where u_id='$user_id'";
+	                	$new_expire_time = time() + 604800;//604800是七天
+	                	$sql = "update user_token set expire_time='$new_expire_time' where u_id='$user_id'";
 	                	if (mysql_query($sql,$conn)) {
-	                		return $user_token; //return json_encode(array('code'=>3001,'message'=>'token验证成功，time_out刷新成功','data'=>$user_token));
+	                		return $user_token; //return json_encode(array('code'=>3001,'message'=>'token验证成功，expire_time刷新成功','data'=>$user_token));
 	                	}else{
-	                		return $false; //return json_encode(array('code'=>3002,'message'=>'token验证成功，time_out刷新失败!原因：'.$conn->error));
+	                		return false; //return json_encode(array('code'=>3002,'message'=>'token验证成功，expire_time刷新失败!原因：'.$conn->error));
 	                	}
 	                }
 	            }else{
-					return $false; //return json_encode(array('code'=>3000,'message'=>'token不存在，需重新登陆!'));
+					return false; //return json_encode(array('code'=>3000,'message'=>'token不存在，需重新登陆!'));
 	            }
 	        }
 	        mysql_close($conn);

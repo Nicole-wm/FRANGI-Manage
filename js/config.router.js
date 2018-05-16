@@ -94,7 +94,7 @@ angular.module('app').run(['$rootScope', '$state', '$stateParams','$localStorage
     })
     .state('app.material_list', {
         url: '/material_list',
-        params:{"typeID":null,"typeName":null},
+        params:{"cateID":null,"cateName":null,"typeID":null,"typeName":null},
         templateUrl: 'tpl/material/material_list.html',
         resolve: {
             deps: ['$ocLazyLoad',

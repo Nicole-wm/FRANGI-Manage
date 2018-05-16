@@ -1,15 +1,15 @@
 <div class="modal-header">
-  <h3 class="modal-title">类别管理</h3>
+	<h3 class="modal-title">类别管理</h3>
 </div>
 <div class="modal-body">
-  <form class="form-inline">
-    <div class="form-group" style="width:100%">
-      <label style="width: 20%" for="inputCname">类别名称</label>
-      <input ng-model="items.MCateName" style="width: 75%" type="text" class="form-control" id="inputCname" placeholder="输入类别名">
-    </div>
-  </form>
+	<form class="form-inline" name="cateForm" novalidate>
+		<div class="form-group" style="width:100%">
+			<label style="width: 20%" for="inputCname">类别名称</label>
+			<input name="MCateName" ng-model="items.MCateName" style="width: 75%" type="text" class="form-control" id="inputCname" placeholder="输入类别名" required>
+		</div>
+	</form>
 </div>
 <div class="modal-footer">                  
-  <button class="btn btn-default" ng-click="cancel()">取消</button>
-  <button class="btn btn-success" ng-click="ok()">确定</button>
+	<button class="btn btn-default" ng-click="cancel()">取消</button>
+	<button class="btn btn-success" ng-disabled="cateForm.MCateName && cateForm.MCateName.$invalid"  ng-click="ok()">确定</button>
 </div> 

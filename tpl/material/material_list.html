@@ -1,6 +1,6 @@
 <div ng-controller="MateListCtrl">
     <div class="bg-light lter b-b wrapper-md">
-        <p class="m-n font-thin h3"><span ng-show="CurTypeID"><span>{{CurTypeName}}</span>&nbsp;&gt;&nbsp;</span><span translate="aside.nav.MATERIAL.MATERIAL_LIST">MATERIAL_LIST</span></p>
+        <p class="m-n font-thin h3"><span ng-show="CurCateID"><span>{{CurCateName}}</span>&nbsp;&gt;&nbsp;</span><span ng-show="CurTypeID"><span>{{CurTypeName}}</span>&nbsp;&gt;&nbsp;</span><span translate="aside.nav.MATERIAL.MATERIAL_LIST">MATERIAL_LIST</span></p>
     </div>
     <div class="wrapper-md" >
         <div class="panel panel-default">
@@ -8,18 +8,18 @@
                 <span translate="public.SEARCH">SEARCH</span>： <input id="filter" type="text" class="form-control input-sm w-sm inline m-r"/>
                 <span class="pull-right">
                     <button class="btn btn-success btn-sm" ng-click="openMateModal(0,'')">添加</button>
-                    <span class="btn btn-primary btn-sm">排序</span>
+                    <span class="btn btn-primary btn-sm" ng-click="sortMate()">排序</span>
                 </span>
             </div>
-            <div>
-                <table class="table m-b-none"  ui-jq="footable" data-filter="#filter" style="table-layout:fixed">
+            <div ng-show="!ShowListFlag">
+                <table class="table m-b-none" data-filter="#filter" style="table-layout:fixed">
                     <thead>
                         <tr>
                             <th width="10%"><nobr>编号</nobr></th>
                             <th width="30%"><nobr>素材内容</nobr></th>
                             <th data-hide="tablet"><nobr>新建时间</nobr></th>
-                            <th data-hide="tablet"><nobr>修改时间</nobr></th>
-                            <th data-hide="tablet"><nobr>是否发布</nobr></th>
+                            <th data-hide="tablet"><nobr>修改时间</nobr></th><!-- 
+                            <th data-hide="tablet"><nobr>是否发布</nobr></th> -->
                             <th data-toggle="true"><nobr>操作</nobr></th>
                         </tr>
                     </thead>
@@ -28,24 +28,32 @@
                             <td>{{$index + 1}}</td>
                             <td class="text-ellipsis" title="{{item.content | htmlToPlaintext}}">{{item.content | htmlToPlaintext}}</td>
                             <td>{{item.createtime}}</td>
-                            <td>{{item.updatetime}}</td>
+                            <td>{{item.updatetime}}</td><!-- 
                             <td data-value="{{item.publish}}">
                                 <span ng-show="{{item.publish}}==1">是</span>
                                 <span ng-show="{{item.publish}}==0">否</span>
-                            </td>
+                            </td> -->
                             <td>
-                              <span class="btn btn-success btn-xs" title="编辑素材" ng-click="openMateModal(1,item)">编辑</span>
-                              <span class="btn btn-info btn-xs" title="发布素材">发布</span>
-                              <span class="btn btn-danger btn-xs" title="删除素材" ng-click="deleteMate(item.id)">删除</span>
-                          </td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-          <script type="text/ng-template" id="myModalMate">
-            <div ng-include="'tpl/material/modal_mate.html'"></div>
-        </script>
-        <toaster-container toaster-options="{'time-out': 2000}"></toaster-container>
+                                <span class="btn btn-success btn-xs" title="编辑素材" ng-click="openMateModal(1,item)">编辑</span><!-- 
+                                <span class="btn btn-info btn-xs" title="发布素材" ng-click="publishMate()">发布</span> -->
+                                <span class="btn btn-danger btn-xs" title="删除素材" ng-click="deleteMate(item.id)">删除</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <pagination total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()" class="m-t-none m-b" first-text="第一页" previous-text="上一页" next-text="下一页" last-text="最后页"></pagination>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <h3 class="m-l-md" ng-show="ShowListFlag">暂无相关内容，请添加！</h3>
+            <script type="text/ng-template" id="myModalMate">
+                <div ng-include="'tpl/material/modal_mate.html'"></div>
+            </script>
+            <toaster-container toaster-options="{'time-out': 2000}"></toaster-container>
+        </div>
     </div>
-</div>
 </div>

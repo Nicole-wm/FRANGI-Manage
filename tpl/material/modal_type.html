@@ -2,19 +2,22 @@
     <h3 class="modal-title">类型管理</h3>
 </div>
 <div class="modal-body">
-    <form>
+    <form name="typeForm" novalidate>
         <div class="form-group">
             <label for="inputTname">类型名称</label>
-            <input ng-model="items.tname" type="text" class="form-control" id="inputTname" placeholder="输入类型名">
+            <input name="MTypeName" ng-model="items.tname" type="text" class="form-control" id="inputTname" placeholder="输入类型名" required>
         </div>
         <div class="form-group">
-            <label for="inputTbanner">Banner</label>
+            <label for="inputTbanner">Banner（请上传3M以内的图片）</label>
             <div class="wrapper-md">
                 <div class="m-b">
-                    <input type="file" nv-file-select="" uploader="uploader" accept="image/*"/>
+                    <input type="file" name="banner" nv-file-select uploader="uploader" accept="image/*"/ ng-click="clearItems()">
                 </div>
                 <div class="m-b">
                     <img id="img-preview" ng-src="{{items.banner}}" class="img-thumbnail"> 
+                </div>
+                <div class="progress progress-sm m-b-none m-t-xs">
+                    <div class="progress-bar bg-info" role="progressbar" ng-style="{ 'width': uploader.queue[0].progress + '%' }" style="width: 0%;"></div>
                 </div>
             </div>
         </div>
@@ -22,5 +25,5 @@
 </div>
 <div class="modal-footer">                  
     <button class="btn btn-default" ng-click="cancel()">取消</button>
-    <button class="btn btn-success" ng-click="ok()">确定</button>
-</div> 
+    <button class="btn btn-success" ng-disabled="typeForm.MTypeName && typeForm.MTypeName.$invalid" ng-click="ok()">确定</button>
+</div>  

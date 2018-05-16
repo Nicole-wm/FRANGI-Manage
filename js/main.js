@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStorage', '$window',function($scope,$translate,$localStorage,$window) {
-   var isIE = !!navigator.userAgent.match(/MSIE/i);
-   isIE && angular.element($window.document.body).addClass('ie');
-   isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
+    var isIE = !!navigator.userAgent.match(/MSIE/i);
+    isIE && angular.element($window.document.body).addClass('ie');
+    isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
 
-   $scope.app = {
+    $scope.app = {
         name: 'Frangi',
         version: '1.1.1',
 
@@ -45,7 +45,7 @@ angular.module('app').controller('AppCtrl', ['$scope', '$translate', '$localStor
     }, true);
 
     $scope.User = $localStorage.User;
-    
+
     $scope.lang = { isopen: false };
     $scope.langs = {zh:'中文简体',en:'English'};
     $scope.selectLang = $scope.langs[$translate.proposedLanguage()] || "中文简体";
