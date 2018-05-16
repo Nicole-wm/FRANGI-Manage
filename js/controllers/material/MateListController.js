@@ -202,8 +202,8 @@ app.controller('MateModalCtrl', ['$scope','$modalInstance','items','FileUploader
 	}else{
 		$scope.mate.cateid = null;
 		$scope.mate.typeid = null;
-		$scope.mate.posters=["../img/poster.png"];
-		$scope.mate.postersUrl=["../img/poster.png"];
+		$scope.mate.posters=["/upimg/mateImg/poster.png"];
+		$scope.mate.postersUrl=["/upimg/mateImg/poster.png"];
 		$scope.mate.content = '<h3>在此输入素材内容!</h3><p>例如</p><p><b>【FRANGI 微商 · 开门红】</b></p><p>开好头，起好步，整年运势挡不住</p><p>活动福利三重奏</p><p>最大的优惠 + 最热卖的产品</p><p>打下全年业绩好基础</p>';
 		if(items.cateid){
 			$scope.mate.cateid = items.cateid;
