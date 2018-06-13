@@ -7,11 +7,15 @@
     $type =$_POST["type"];
     $tid = $_POST["tid"];
     
+<<<<<<< HEAD
     $cur_Filepath="/upimg/".$type."/".$tid."/";
     $cur_path="../..".$cur_Filepath;
+=======
+    $cur_path="/upimg/".$type."/".$tid."/";
+>>>>>>> 23c1f8b38a117c89bf9a19b5a41de9b4363943f7
     $up = new fileupload;
         //设置属性(上传的位置， 大小， 类型，名是是否要随机生成)
-    $up -> set("path",$cur_path);
+    $up -> set("path","../..".$cur_path);
     $up -> set("maxsize", 3*1024*1024);
     $up -> set("allowtype", array("gif", "png", "jpg","jpeg"));
     $up -> set("israndname", true);
