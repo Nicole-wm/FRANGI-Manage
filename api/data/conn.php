@@ -1,11 +1,14 @@
 <?php
 	$db_host = "localhost"; //数据库主机名
-	$db_user = "root";//数据库用户名
-	$db_pwd = "123456";//数据库密码
-	$db_name = "manage";//数据库名称
+	// $db_user = "root";//数据库用户名
+	// $db_pwd = "123456";//数据库密码
+	// $db_name = "manage";//数据库名称
+	$db_user = "cms_frangi_cn";//数据库用户名
+	$db_pwd = "a73fb578d8";//数据库密码
+	$db_name = "cms_frangi_cn";//数据库名称
 	$db_port = "3306";//数据库端口////数据库连接
 	$conn = @mysql_connect($db_host, $db_user,$db_pwd);
-	mysql_query ( 'SET NAMES utf8' ,$conn);
+	mysql_query ( 'SET NAMES utf8',$conn);
 	mysql_query ( "SET CHARACTER_SET_CLIENT='utf8'" ,$conn);
 	mysql_query ( "SET CHARACTER_SET_RESULTS='utf8'" ,$conn);
 	if(!$conn)

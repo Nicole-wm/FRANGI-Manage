@@ -158,7 +158,7 @@ app.controller('TypeListCtrl', ['$scope','$modal','toaster','$stateParams','$htt
 app.controller('TypeModalCtrl', ['$scope','$modalInstance','items','toaster','FileUploader',function($scope,$modalInstance,items,toaster,FileUploader) {
 	$scope.items = items;
 	if($scope.items.iscreate){//新建
-		$scope.items.banner="../upimg/typeBanner/banner.png"
+		$scope.items.banner="/upimg/typeBanner/banner.png"
 	}
 	$scope.items.bannerUrl=$scope.items.banner;
 
@@ -172,7 +172,7 @@ app.controller('TypeModalCtrl', ['$scope','$modalInstance','items','toaster','Fi
 
 	$scope.clearItems = function(){ 
 		uploader.clearQueue();
-		$scope.items.banner="../upimg/typeBanner/banner.png";
+		$scope.items.banner="/upimg/typeBanner/banner.png";
 	};
 
 	uploader.onAfterAddingFile = function(fileItem) {
@@ -186,6 +186,7 @@ app.controller('TypeModalCtrl', ['$scope','$modalInstance','items','toaster','Fi
 	};
 	uploader.onCompleteItem = function(fileItem, response, status, headers) {
 		if(response.code==1) {
+			console.log(response.data);
 			$scope.items.bannerUrl=response.data;
 		}else{
 			$scope.items.bannerUrl='';

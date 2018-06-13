@@ -7,7 +7,8 @@
     $type =$_POST["type"];
     $tid = $_POST["tid"];
     
-    $cur_path="../../upimg/".$type."/".$tid."/";
+    $cur_Filepath="/upimg/".$type."/".$tid."/";
+    $cur_path="../..".$cur_Filepath;
     $up = new fileupload;
         //设置属性(上传的位置， 大小， 类型，名是是否要随机生成)
     $up -> set("path",$cur_path);
@@ -19,7 +20,7 @@
         /*echo '<pre>';
         var_dump($up->getFileName());
         echo '</pre>';*/
-        Response::json(1,'图片上传成功！',$cur_path.$up->getFileName());
+        Response::json(1,'图片上传成功！',$cur_Filepath.$up->getFileName());
         
     } else {
         /*echo '<pre>';
